@@ -12,6 +12,7 @@
 #include <sys/stat.h> /* stat function */
 #include <signal.h> /* signal management */
 #include <errno.h> /* errno and perror */
+#include "macros.h" /* msg help and prompt */
 
 
 /**
