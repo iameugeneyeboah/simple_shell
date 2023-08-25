@@ -6,7 +6,7 @@
  *
  * Return: Size of list
  */
-size_t list_len(const list_t *h)
+size_t list_len(const myshell_list_t *h)
 {
 	size_t i = 0;
 
@@ -24,9 +24,9 @@ size_t list_len(const list_t *h)
  *
  * Return: Array of strings
  */
-char **list_to_strings(list_t *head)
+char **list_to_strings(myshell_list_t *head)
 {
-	list_t *node = head;
+	myshell_list_t *node = head;
 	size_t i = list_len(head), j;
 	char **strs;
 	char *str;
@@ -38,7 +38,7 @@ char **list_to_strings(list_t *head)
 		return (NULL);
 	for (i = 0; node; node = node->next, i++)
 	{
-		str = malloc(_strlen(node->str) + 1);
+		str = malloc(strlen(node->str) + 1);
 		if (!str)
 		{
 			for (j = 0; j < i; j++)
@@ -47,7 +47,7 @@ char **list_to_strings(list_t *head)
 			return (NULL);
 		}
 
-		str = _strcpy(str, node->str);
+		str = strcpy(str, node->str);
 		strs[i] = str;
 	}
 	strs[i] = NULL;
@@ -61,17 +61,17 @@ char **list_to_strings(list_t *head)
  *
  * Return: Size of list
  */
-size_t print_list(const list_t *h)
+size_t print_list(const myshell_list_t *h)
 {
 	size_t i = 0;
 
 	while (h)
 	{
-		_puts(convert_number(h->num, 10, 0));
-		_putchar(':');
-		_putchar(' ');
-		_puts(h->str ? h->str : "(nil)");
-		_puts("\n");
+		puts(myshell_convert_number(h->num, 10, 0));
+		putchar(':');
+		putchar(' ');
+		puts(h->str ? h->str : "(nil)");
+		puts("\n");
 		h = h->next;
 		i++;
 	}
@@ -86,7 +86,7 @@ size_t print_list(const list_t *h)
  *
  * Return: Matching node or NULL
  */
-list_t *node_starts_with(list_t *node, char *prefix, char c)
+myshell_list_t *node_starts_with(myshell_list_t *node, char *prefix, char c)
 {
 	char *p = NULL;
 
@@ -107,7 +107,7 @@ list_t *node_starts_with(list_t *node, char *prefix, char c)
  *
  * Return: Index of node or -1
  */
-ssize_t get_node_index(list_t *head, list_t *node)
+ssize_t get_node_index(myshell_list_t *head, myshell_list_t *node)
 {
 	size_t i = 0;
 
