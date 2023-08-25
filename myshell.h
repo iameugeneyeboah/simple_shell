@@ -215,6 +215,7 @@ int myshell_write_history(myshell_info_t *info);
 int myshell_read_history(myshell_info_t *info);
 int myshell_build_history_list(myshell_info_t *info, char *buf, int linecount);
 int myshell_renumber_history(myshell_info_t *info);
+int hsh(myshell_info_t *info, char **argv);
 
 /* myshell_lists.c */
 myshell_list_t *myshell_add_node(myshell_list_t **, const char *, int);

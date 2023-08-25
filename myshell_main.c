@@ -38,7 +38,7 @@ int main(int ac, char **av)
 		myshell->myshell_readfd = fd;
 	}
 	myshell_populate_env_list(myshell);
-	read_history(myshell);
-	hsh(myshell, av);
+	myshell_read_history(myshell);
+	myshell_mycd(myshell);
 	return (EXIT_SUCCESS);
 }
