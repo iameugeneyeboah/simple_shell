@@ -23,7 +23,8 @@ int myshell_strlen(char *str)
  * @str1: The first string
  * @str2: The second string
  *
- * Return: Negative if str1 < str2, positive if str1 > str2, zero if str1 == str2
+ * Return: Negative if str1 < str2, positive if str1 > str2,
+ * zero if str1 == str2
  */
 int myshell_strcmp(char *str1, char *str2)
 {
