@@ -38,8 +38,7 @@
 extern char **myshell_environ;
 
 /* Information structure */
-typedef struct MyShellInfo
-{
+typedef struct MyShellInfo {
     char *myshell_arg;
     char **myshell_argv;
     char *myshell_path;
@@ -66,8 +65,7 @@ typedef struct MyShellInfo
     0, 0, 0}
 
 /* Builtin command structure */
-typedef struct MyShellBuiltin
-{
+typedef struct MyShellBuiltin {
     char *myshell_type;
     int (*myshell_func)(myshell_info_t *);
 } myshell_builtin_table;
