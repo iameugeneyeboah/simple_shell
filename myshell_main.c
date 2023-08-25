@@ -9,7 +9,7 @@
  */
 int main(int ac, char **av)
 {
-	info_t myshell[] = { INFO_INIT };
+	myshell_info_t myshell[] = { MYSHELL_INFO_INIT };
 	int fd = 2;
 
 	asm ("mov %1, %0\n\t"
@@ -26,18 +26,18 @@ int main(int ac, char **av)
 				exit(126);
 			if (errno == ENOENT)
 			{
-				_eputs(av[0]);
-				_eputs(": 0: Can't open ");
-				_eputs(av[1]);
-				_eputchar('\n');
-				_eputchar(BUF_FLUSH);
+				puts(av[0]);
+				puts(": 0: Can't open ");
+				puts(av[1]);
+				putchar('\n');
+				putchar(MYSHELL_BUF_FLUSH);
 				exit(127);
 			}
 			return (EXIT_FAILURE);
 		}
-		myshell->readfd = fd;
+		myshell->myshell_readfd = fd;
 	}
-	populate_env_list(myshell);
+	myshell_populate_env_list(myshell);
 	read_history(myshell);
 	hsh(myshell, av);
 	return (EXIT_SUCCESS);

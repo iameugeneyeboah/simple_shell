@@ -2,6 +2,7 @@
 #ifndef MYSHELL_SHELL_H
 #define MYSHELL_SHELL_H
 
+#include <history.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
