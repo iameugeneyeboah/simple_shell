@@ -186,7 +186,7 @@ int myshell_myhistory(myshell_info_t *);
 int myshell_myalias(myshell_info_t *);
 int myshell_myenv(myshell_info_t *);
 
-/* myshell_getline.c */
+/* myshell_getLine.c */
 ssize_t myshell_get_input(myshell_info_t *);
 int myshell_getline(myshell_info_t *, char **, size_t *);
 void myshell_sigintHandler(int);
