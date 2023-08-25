@@ -1,15 +1,14 @@
 #include "myshell.h"
 
 /**
- * myshell_history - Displays the history list, one command per line, preceded
- *                   with line numbers, starting at 0.
+ * myshell_history - Displays the history list, one command per line, preceded with line numbers, starting at 0.
  * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
+ * constant function prototype.
  * Return: Always 0
  */
-int myshell_history(info_t *info)
+int myshell_myhistory(myshell_info_t *info)
 {
-	print_list(info->history);
+	print_list(info->myshell_history);
 	return (0);
 }
 
@@ -19,7 +18,7 @@ int myshell_history(info_t *info)
  * @str: The string alias
  * Return: Always 0 on success, 1 on error
  */
-int myshell_unset_alias(info_t *info, char *str)
+int myshell_unset_alias(myshell_info_t *info, char *str)
 {
 	char *p, c;
 	int ret;
@@ -29,8 +28,8 @@ int myshell_unset_alias(info_t *info, char *str)
 		return (1);
 	c = *p;
 	*p = 0;
-	ret = delete_node_at_index(&(info->alias),
-		get_node_index(info->alias, node_starts_with(info->alias, str, -1)));
+	ret = myshell_delete_node_at_index(&(info->myshell_alias),
+		myshell_get_node_index(info->myshell_alias, myshell_node_starts_with(info->myshell_alias, str, -1)));
 	*p = c;
 	return (ret);
 }
@@ -41,7 +40,7 @@ int myshell_unset_alias(info_t *info, char *str)
  * @str: The string alias
  * Return: Always 0 on success, 1 on error
  */
-int myshell_set_alias(info_t *info, char *str)
+int myshell_set_alias(myshell_info_t *info, char *str)
 {
 	char *p;
 
@@ -52,7 +51,7 @@ int myshell_set_alias(info_t *info, char *str)
 		return (myshell_unset_alias(info, str));
 
 	myshell_unset_alias(info, str);
-	return (add_node_end(&(info->alias), str, 0) == NULL);
+	return (add_node_end(&(info->myshell_alias), str, 0) == NULL);
 }
 
 /**
@@ -60,7 +59,7 @@ int myshell_set_alias(info_t *info, char *str)
  * @node: The alias node
  * Return: Always 0 on success, 1 on error
  */
-int print_alias(list_t *node)
+int print_alias(myshell_list_t *node)
 {
 	char *p = NULL, *a = NULL;
 
@@ -78,20 +77,28 @@ int print_alias(list_t *node)
 }
 
 /**
+ * Define the structure for a node in the linked list
+ */
+typedef struct Node {
+    char *myshell_alias;
+    struct Node *next;
+} list_t;
+
+/**
  * myshell_alias - Mimics the alias builtin (man alias)
  * @info: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
  * Return: Always 0
  */
-int myshell_alias(info_t *info)
+int myshell_alias(myshell_info_t *info)
 {
 	int i = 0;
 	char *p = NULL;
 	list_t *node = NULL;
 
-	if (info->argc == 1)
+	if (info->myshell_argc == 1)
 	{
-		node = info->alias;
+		node = info->myshell_alias;
 		while (node)
 		{
 			print_alias(node);
@@ -99,13 +106,13 @@ int myshell_alias(info_t *info)
 		}
 		return (0);
 	}
-	for (i = 1; info->argv[i]; i++)
+	for (i = 1; info->myshell_argv[i]; i++)
 	{
-		p = myshell_strchr(info->argv[i], '=');
+		p = myshell_strchr(info->myshell_argv[i], '=');
 		if (p)
-			myshell_set_alias(info, info->argv[i]);
+			myshell_set_alias(info, info->myshell_argv[i]);
 		else
-			print_alias(node_starts_with(info->alias, info->argv[i], '='));
+			print_alias(node_starts_with(info->myshell_alias, info->myshell_argv[i], '='));
 	}
 
 	return (0);

@@ -6,9 +6,9 @@
  *
  * Return: 1 if in interactive mode, 0 otherwise
  */
-int myshell_interactive(info_t *info)
+int myshell_interactive(myshell_info_t *info)
 {
-	return (isatty(STDIN_FILENO) && info->readfd <= 2);
+	return (isatty(STDIN_FILENO) && info->myshell_readfd <= 2);
 }
 
 /**
