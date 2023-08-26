@@ -6,7 +6,7 @@
  *
  * Return: Nothing
  */
-void _eputs(char *str)
+void myshell_eputs(char *str)
 {
     int i = 0;
 
@@ -14,7 +14,7 @@ void _eputs(char *str)
         return;
     while (str[i] != '\0')
     {
-        _eputchar(str[i]);
+        myshell_eputchar(str[i]);
         i++;
     }
 }
@@ -26,17 +26,17 @@ void _eputs(char *str)
  * Return: On success 1.
  * On error, -1 is returned, and errno is set appropriately.
  */
-int _eputchar(char c)
+int myshell_eputchar(char c)
 {
     static int i;
-    static char buf[WRITE_BUF_SIZE];
+    static char buf[MYSHELL_WRITE_BUF_SIZE];
 
-    if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+    if (c == MYSHELL_BUF_FLUSH || i >= MYSHELL_WRITE_BUF_SIZE)
     {
         write(2, buf, i);
         i = 0;
     }
-    if (c != BUF_FLUSH)
+    if (c != MYSHELL_BUF_FLUSH)
         buf[i++] = c;
     return (1);
 }
@@ -52,14 +52,14 @@ int _eputchar(char c)
 int _putfd(char c, int fd)
 {
     static int i;
-    static char buf[WRITE_BUF_SIZE];
+    static char buf[MYSHELL_WRITE_BUF_SIZE];
 
-    if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+    if (c == MYSHELL_BUF_FLUSH || i >= MYSHELL_WRITE_BUF_SIZE)
     {
         write(fd, buf, i);
         i = 0;
     }
-    if (c != BUF_FLUSH)
+    if (c != MYSHELL_BUF_FLUSH)
         buf[i++] = c;
     return (1);
 }

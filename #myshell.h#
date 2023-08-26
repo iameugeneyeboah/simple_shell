@@ -2,6 +2,7 @@
 #ifndef MYSHELL_SHELL_H
 #define MYSHELL_SHELL_H
 
+#include <history.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <limits.h>
@@ -79,7 +80,26 @@ typedef struct MyShellInfo {
     char **myshell_argv;
     char *myshell_path;
     int myshell_argc;
+typedef struct MyShellInfo {
+    char *myshell_arg;
+    char **myshell_argv;
+    char *myshell_path;
+    int myshell_argc;
     unsigned int myshell_line_count;
+    int myshell_err_num;
+    int myshell_linecount_flag;
+    char *myshell_fname;
+    myshell_list_t *myshell_env;
+    myshell_list_t *myshell_history;
+    myshell_list_t *myshell_alias;
+    char **myshell_environ;
+    int myshell_env_changed;
+    int myshell_status;
+    char **myshell_cmd_buf;
+    int myshell_cmd_buf_type;
+    int myshell_readfd;
+    int myshell_histcount;
+} myshell_info_t;    unsigned int myshell_line_count;
     int myshell_err_num;
     int myshell_linecount_flag;
     char *myshell_fname;

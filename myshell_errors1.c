@@ -12,7 +12,7 @@ int _erratoi(char *s)
     unsigned long int result = 0;
 
     if (*s == '+')
-        s++;  /* TODO: why does this make main return 255? */
+        s++;
     for (i = 0; s[i] != '\0'; i++)
     {
         if (s[i] >= '0' && s[i] <= '9')
@@ -35,15 +35,15 @@ int _erratoi(char *s)
  * Return: 0 if no numbers in string, converted number otherwise
  *        -1 on error
  */
-void print_error(info_t *info, char *estr)
+void print_error(myshell_info_t *info, char *estr)
 {
-    _eputs(info->fname);
-    _eputs(": ");
-    print_d(info->line_count, STDERR_FILENO);
-    _eputs(": ");
-    _eputs(info->argv[0]);
-    _eputs(": ");
-    _eputs(estr);
+    puts(info->myshell_fname);
+    puts(": ");
+    printf(info->myshell_line_count, STDERR_FILENO);
+    puts(": ");
+    puts(info->myshell_argv[0]);
+    puts(": ");
+    puts(estr);
 }
 
 /**
@@ -55,12 +55,12 @@ void print_error(info_t *info, char *estr)
  */
 int print_d(int input, int fd)
 {
-    int (*__putchar)(char) = _putchar;
+    int (*__putchar)(char) = __putchar;
     int i, count = 0;
     unsigned int _abs_, current;
 
     if (fd == STDERR_FILENO)
-        __putchar = _eputchar;
+        __putchar = __putchar;
     if (input < 0)
     {
         _abs_ = -input;
@@ -101,12 +101,12 @@ char *convert_number(long int num, int base, int flags)
     char *ptr;
     unsigned long n = num;
 
-    if (!(flags & CONVERT_UNSIGNED) && num < 0)
+    if (!(flags & MYSHELL_CONVERT_UNSIGNED) && num < 0)
     {
         n = -num;
         sign = '-';
     }
-    array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
+    array = flags & MYSHELL_CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
     ptr = &buffer[49];
     *ptr = '\0';
 
