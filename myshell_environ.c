@@ -6,9 +6,9 @@
  *          constant function prototype.
  * Return: Always 0
  */
-int myenv(info_t *info)
+int myenv(myshell_info_t *info)
 {
-    print_list_str(info->env);
+    myshell_print_list_str(info->myshell_env);
     return (0);
 }
 
@@ -19,9 +19,9 @@ int myenv(info_t *info)
  *
  * Return: the value
  */
-char *my_getenv(info_t *info, const char *name)
+char *my_getenv(myshell_info_t *info, const char *name)
 {
-    list_t *node = info->env;
+    myshell_list_t *node = info->myshell_env;
     char *p;
 
     while (node)
@@ -41,14 +41,14 @@ char *my_getenv(info_t *info, const char *name)
  *        constant function prototype.
  * Return: Always 0
  */
-int mysetenv(info_t *info)
+int mysetenv(myshell_info_t *info)
 {
-    if (info->argc != 3)
+    if (info->myshell_argc != 3)
     {
-	_eputs("Incorrect number of arguments\n");
+	eputs("Incorrect number of arguments\n");
 	return (1);
     }
-    if (_setenv(info, info->argv[1], info->argv[2]))
+    if (_setenv(info, info->myshell_argv[1], info->myshell_argv[2]))
 	return (0);
     return (1);
 }
@@ -59,17 +59,17 @@ int mysetenv(info_t *info)
  *        constant function prototype.
  * Return: Always 0
  */
-int myunsetenv(info_t *info)
+int myunsetenv(myshell_info_t *info)
 {
     int i;
 
-    if (info->argc == 1)
+    if (info->myshell_argc == 1)
     {
-	_eputs("Too few arguments.\n");
+	eputs("Too few arguments.\n");
 	return (1);
     }
-    for (i = 1; i <= info->argc; i++)
-	 _unsetenv(info, info->argv[i]);
+    for (i = 1; i <= info->myshell_argc; i++)
+	_unsetenv(info, info->myshell_argv[i]);
 
     return (0);
 }
@@ -80,13 +80,13 @@ int myunsetenv(info_t *info)
  *          constant function prototype.
  * Return: Always 0
  */
-int populate_env_list(info_t *info)
+int populate_env_list(myshell_info_t *info)
 {
-    list_t *node = NULL;
+    myshell_list_t *node = NULL;
     size_t i;
 
-    for (i = 0; environ[i];)
-	add_node_end(&node, environ[i], 0);
-	info->env = node;
+    for (i = 0; myshell_environ[i];)
+	myshell_add_node_end(&node, myshell_environ[i], 0);
+	info->myshell_env = node;
     return (0);
 }
