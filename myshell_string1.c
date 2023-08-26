@@ -74,14 +74,14 @@ void myshell_puts(char *str)
 int myshell_putchar(char c)
 {
 	static int index;
-	static char buffer[WRITE_BUF_SIZE];
+	static char buffer[MYSHELL_WRITE_BUF_SIZE];
 
-	if (c == BUF_FLUSH || index >= WRITE_BUF_SIZE)
+	if (c == MYSHELL_BUF_FLUSH || index >= MYSHELL_WRITE_BUF_SIZE)
 	{
 		write(1, buffer, index);
 		index = 0;
 	}
-	if (c != BUF_FLUSH)
+	if (c != MYSHELL_BUF_FLUSH)
 		buffer[index++] = c;
 	return (1);
 }
