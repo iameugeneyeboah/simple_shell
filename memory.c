@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * free_and_null - Frees a pointer and sets it to NULL.
+ * bfree - Frees a pointer and sets it to NULL.
  * @ptr: Address of the pointer to be freed.
  *
  * This fxn frees memory allocated for the pointer 'ptr' and sets the pointer
@@ -10,7 +10,7 @@
  *
  * Return: 1 if freed, otherwise 0.
  */
-int free_and_null(void **ptr)
+int bfree(void **ptr)
 {
 	if (ptr && *ptr)
 	{
