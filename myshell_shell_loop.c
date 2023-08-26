@@ -17,7 +17,7 @@ int myshell_main_loop(myshell_info_t *info, char **av)
 		myshell_clear_info(info);
 		if (myshell_interactive(info))
 			myshell_puts("$ ");
-		myshell_eputchar(BUF_FLUSH);
+		myshell_eputchar(MYSHELL_BUF_FLUSH);
 		read_status = myshell_get_input(info);
 		if (read_status != -1)
 		{
@@ -32,13 +32,13 @@ int myshell_main_loop(myshell_info_t *info, char **av)
 	}
 	myshell_write_history(info);
 	myshell_free_info(info, 1);
-	if (!myshell_interactive(info) && info->status)
-		exit(info->status);
+	if (!myshell_interactive(info) && info->myshell_status)
+		exit(info->myshell_status);
 	if (builtin_ret == -2)
 	{
-		if (info->err_num == -1)
-			exit(info->status);
-		exit(info->err_num);
+		if (info->myshell_err_num == -1)
+			exit(info->myshell_status);
+		exit(info->myshell_err_num);
 	}
 	return (builtin_ret);
 }
@@ -55,7 +55,7 @@ int myshell_main_loop(myshell_info_t *info, char **av)
 int myshell_find_builtin(myshell_info_t *info)
 {
 	int i, builtin_ret = -1;
-	builtin_table builtintbl[] = {
+	myshell_builtin_table builtintbl[] = {
 		{"exit", myshell_myexit},
 		{"env", myshell_myenv},
 		{"help", myshell_myhelp},
@@ -67,11 +67,11 @@ int myshell_find_builtin(myshell_info_t *info)
 		{NULL, NULL}
 	};
 
-	for (i = 0; builtintbl[i].type; i++)
-		if (myshell_strcmp(info->argv[0], builtintbl[i].type) == 0)
+	for (i = 0; builtintbl[i].myshell_type; i++)
+		if (myshell_strcmp(info->myshell_argv[0], builtintbl[i].myshell_type) == 0)
 		{
-			info->line_count++;
-			builtin_ret = builtintbl[i].func(info);
+			info->myshell_line_count++;
+			builtin_ret = builtintbl[i].myshell_func(info);
 			break;
 		}
 	return (builtin_ret);
@@ -88,32 +88,32 @@ void myshell_find_cmd(myshell_info_t *info)
 	char *path = NULL;
 	int i, arg_len;
 
-	info->path = info->argv[0];
-	if (info->linecount_flag == 1)
+	info->myshell_path = info->myshell_argv[0];
+	if (info->myshell_linecount_flag == 1)
 	{
-		info->line_count++;
-		info->linecount_flag = 0;
+		info->myshell_line_count++;
+		info->myshell_linecount_flag = 0;
 	}
-	for (i = 0, arg_len = 0; info->arg[i]; i++)
-		if (!myshell_is_delim(info->arg[i], " \t\n"))
+	for (i = 0, arg_len = 0; info->myshell_arg[i]; i++)
+		if (!myshell_is_delim(info->myshell_arg[i], " \t\n"))
 			arg_len++;
 	if (!arg_len)
 		return;
 
-	path = myshell_find_path(info, myshell_getenv(info, "PATH="), info->argv[0]);
+	path = myshell_find_path(info, myshell_getenv(info, "PATH="), info->myshell_argv[0]);
 	if (path)
 	{
-		info->path = path;
+		info->myshell_path = path;
 		myshell_fork_cmd(info);
 	}
 	else
 	{
 		if ((myshell_interactive(info) || myshell_getenv(info, "PATH=")
-				|| info->argv[0][0] == '/') && myshell_is_cmd(info, info->argv[0]))
+				|| info->myshell_argv[0][0] == '/') && myshell_is_cmd(info, info->myshell_argv[0]))
 			myshell_fork_cmd(info);
-		else if (*(info->arg) != '\n')
+		else if (*(info->myshell_arg) != '\n')
 		{
-			info->status = 127;
+			info->myshell_status = 127;
 			myshell_print_error(info, "not found\n");
 		}
 	}
@@ -138,7 +138,7 @@ void myshell_fork_cmd(myshell_info_t *info)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(info->path, info->argv, myshell_get_environ(info)) == -1)
+		if (execve(info->myshell_path, info->myshell_argv, myshell_get_environ(info)) == -1)
 		{
 			myshell_free_info(info, 1);
 			if (errno == EACCES)
@@ -149,11 +149,11 @@ void myshell_fork_cmd(myshell_info_t *info)
 	}
 	else
 	{
-		wait(&(info->status));
-		if (WIFEXITED(info->status))
+		wait(&(info->myshell_status));
+		if (WIFEXITED(info->myshell_status))
 		{
-			info->status = WEXITSTATUS(info->status);
-			if (info->status == 126)
+			info->myshell_status = WEXITSTATUS(info->myshell_status);
+			if (info->myshell_status == 126)
 				myshell_print_error(info, "Permission denied\n");
 		}
 	}
