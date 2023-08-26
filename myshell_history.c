@@ -6,20 +6,20 @@
  *
  * Return: Allocated string containing history file
  */
-char *get_history_file(info_t *info)
+char *get_history_file(myshell_info_t *info)
 {
 	char *buf, *dir;
 
 	dir = _getenv(info, "HOME=");
 	if (!dir)
 		return (NULL);
-	buf = malloc(sizeof(char) * (_strlen(dir) + _strlen(HIST_FILE) + 2));
+	buf = malloc(sizeof(char) * (strlen(dir) + strlen(MYSHELL_HISTORY_FILE) + 2));
 	if (!buf)
 		return (NULL);
 	buf[0] = 0;
-	_strcpy(buf, dir);
-	_strcat(buf, "/");
-	_strcat(buf, HIST_FILE);
+	strcpy(buf, dir);
+	strcat(buf, "/");
+	strcat(buf, MYSHELL_HISTORY_FILE);
 	return (buf);
 }
 
@@ -29,11 +29,11 @@ char *get_history_file(info_t *info)
  *
  * Return: 1 on success, else -1
  */
-int write_history(info_t *info)
+int write_history(myshell_info_t *info)
 {
 	ssize_t fd;
 	char *filename = get_history_file(info);
-	list_t *node = NULL;
+	myshell_list_t *node = NULL;
 
 	if (!filename)
 		return (-1);
@@ -42,12 +42,12 @@ int write_history(info_t *info)
 	free(filename);
 	if (fd == -1)
 		return (-1);
-	for (node = info->history; node; node = node->next)
+	for (node = info->myshell_history; node; node = node->next)
 	{
-		_putsfd(node->str, fd);
-		_putfd('\n', fd);
+		putsfd(node->str, fd);
+		putfd('\n', fd);
 	}
-	_putfd(BUF_FLUSH, fd);
+	putfd(MYSHELL_BUF_FLUSH, fd);
 	close(fd);
 	return (1);
 }
@@ -58,7 +58,7 @@ int write_history(info_t *info)
  *
  * Return: Histcount on success, 0 otherwise
  */
-int read_history(info_t *info)
+int read_history(myshell_info_t *info)
 {
 	int i, last = 0, linecount = 0;
 	ssize_t fd, rdlen, fsize = 0;
@@ -88,17 +88,17 @@ int read_history(info_t *info)
 		if (buf[i] == '\n')
 		{
 			buf[i] = 0;
-			build_history_list(info, buf + last, linecount++);
+			myshell_build_history_list(info, buf + last, linecount++);
 			last = i + 1;
 		}
 	if (last != i)
-		build_history_list(info, buf + last, linecount++);
+		myshell_build_history_list(info, buf + last, linecount++);
 	free(buf);
-	info->histcount = linecount;
-	while (info->histcount-- >= HIST_MAX)
-		delete_node_at_index(&(info->history), 0);
-	renumber_history(info);
-	return (info->histcount);
+	info->myshell_histcount = linecount;
+	while (info->myshell_histcount-- >= INT_MAX)
+		myshell_delete_node_at_index(&(info->myshell_history), 0);
+	myshell_renumber_history(info);
+	return (info->myshell_histcount);
 }
 
 /**
@@ -109,16 +109,16 @@ int read_history(info_t *info)
  *
  * Return: Always 0
  */
-int build_history_list(info_t *info, char *buf, int linecount)
+int build_history_list(myshell_info_t *info, char *buf, int linecount)
 {
-	list_t *node = NULL;
+	myshell_list_t *node = NULL;
 
-	if (info->history)
-		node = info->history;
-	add_node_end(&node, buf, linecount);
+	if (info->myshell_history)
+		node = info->myshell_history;
+	myshell_add_node_end(&node, buf, linecount);
 
-	if (!info->history)
-		info->history = node;
+	if (!info->myshell_history)
+		info->myshell_history = node;
 	return (0);
 }
 
@@ -128,9 +128,9 @@ int build_history_list(info_t *info, char *buf, int linecount)
  *
  * Return: The new histcount
  */
-int renumber_history(info_t *info)
+int renumber_history(myshell_info_t *info)
 {
-	list_t *node = info->history;
+	myshell_list_t *node = info->myshell_history;
 	int i = 0;
 
 	while (node)
@@ -138,5 +138,5 @@ int renumber_history(info_t *info)
 		node->num = i++;
 		node = node->next;
 	}
-	return (info->histcount = i);
+	return (info->myshell_histcount = i);
 }
