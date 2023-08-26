@@ -4,12 +4,12 @@
  * clear_info - Initializes info_t struct
  * @info: Struct address
  */
-void clear_info(info_t *info)
+void clear_info(myshell_info_t *info)
 {
-	info->arg = NULL;
-	info->argv = NULL;
-	info->path = NULL;
-	info->argc = 0;
+	info->myshell_arg = NULL;
+	info->myshell_argv = NULL;
+	info->myshell_path = NULL;
+	info->myshell_argc = 0;
 }
 
 /**
@@ -17,29 +17,29 @@ void clear_info(info_t *info)
  * @info: Struct address
  * @av: Argument vector
  */
-void set_info(info_t *info, char **av)
+void set_info(myshell_info_t *info, char **av)
 {
 	int i = 0;
 
-	info->fname = av[0];
-	if (info->arg)
+	info->myshell_fname = av[0];
+	if (info->myshell_arg)
 	{
-		info->argv = strtow(info->arg, " \t");
-		if (!info->argv)
+		info->myshell_argv = myshell_strtow(info->myshell_arg, " \t");
+		if (!info->myshell_argv)
 		{
-			info->argv = malloc(sizeof(char *) * 2);
-			if (info->argv)
+			info->myshell_argv = malloc(sizeof(char *) * 2);
+			if (info->myshell_argv)
 			{
-				info->argv[0] = _strdup(info->arg);
-				info->argv[1] = NULL;
+				info->myshell_argv[0] = myshell_strdup(info->myshell_arg);
+				info->myshell_argv[1] = NULL;
 			}
 		}
-		for (i = 0; info->argv && info->argv[i]; i++)
+		for (i = 0; info->myshell_argv && info->myshell_argv[i]; i++)
 			;
-		info->argc = i;
+		info->myshell_argc = i;
 
-		replace_alias(info);
-		replace_vars(info);
+		myshell_replace_alias(info);
+		myshell_replace_vars(info);
 	}
 }
 
@@ -48,26 +48,26 @@ void set_info(info_t *info, char **av)
  * @info: Struct address
  * @all: True if freeing all fields
  */
-void free_info(info_t *info, int all)
+void free_info(myshell_info_t *info, int all)
 {
-	ffree(info->argv);
-	info->argv = NULL;
-	info->path = NULL;
+	free(info->myshell_argv);
+	info->myshell_argv = NULL;
+	info->myshell_path = NULL;
 	if (all)
 	{
-		if (!info->cmd_buf)
-			free(info->arg);
-		if (info->env)
-			free_list(&(info->env));
-		if (info->history)
-			free_list(&(info->history));
-		if (info->alias)
-			free_list(&(info->alias));
-		ffree(info->environ);
-			info->environ = NULL;
-		bfree((void **)info->cmd_buf);
-		if (info->readfd > 2)
-			close(info->readfd);
-		_putchar(BUF_FLUSH);
+		if (!info->myshell_cmd_buf)
+			free(info->myshell_arg);
+		if (info->myshell_env)
+			myshell_free_list(&(info->myshell_env));
+		if (info->myshell_history)
+			myshell_free_list(&(info->myshell_history));
+		if (info->myshell_alias)
+			myshell_free_list(&(info->myshell_alias));
+		free(info->myshell_environ);
+			info->myshell_environ = NULL;
+		free((void **)info->myshell_cmd_buf);
+		if (info->myshell_readfd > 2)
+			close(info->myshell_readfd);
+		myshell_putchar(MYSHELL_BUF_FLUSH);
 	}
 }
