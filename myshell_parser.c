@@ -57,7 +57,7 @@ char *find_path(myshell_info_t *info, char *pathstr, char *cmd)
 
 	if (!pathstr)
 		return (NULL);
-	if ((strlen(cmd) > 2) && starts_with(cmd, "./"))
+	if ((strlen(cmd) > 2) && myshell_starts_with(cmd, "./"))
 	{
 		if (is_cmd(info, cmd))
 			return (cmd);
