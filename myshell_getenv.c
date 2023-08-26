@@ -6,15 +6,15 @@
  *          constant function prototype.
  * Return: The environment strings array
  */
-char **get_environ(info_t *info)
+char **get_environ(myshell_info_t *info)
 {
-	if (!info->environ || info->env_changed)
+	if (!info->myshell_environ || info->myshell_env_changed)
 	{
-		info->environ = list_to_strings(info->env);
-		info->env_changed = 0;
+		info->myshell_environ = myshell_list_to_strings(info->myshell_env);
+		info->myshell_env_changed = 0;
 	}
 
-	return (info->environ);
+	return (info->myshell_environ);
 }
 
 /**
@@ -24,9 +24,9 @@ char **get_environ(info_t *info)
  * @var: The string env var property
  * Return: 1 on delete, 0 otherwise
  */
-int _unsetenv(info_t *info, char *var)
+int _unsetenv(myshell_info_t *info, char *var)
 {
-	list_t *node = info->env;
+	myshell_list_t *node = info->myshell_env;
 	size_t i = 0;
 	char *p;
 
@@ -35,18 +35,18 @@ int _unsetenv(info_t *info, char *var)
 
 	while (node)
 	{
-		p = starts_with(node->str, var);
+		p = myshell_starts_with(node->str, var);
 		if (p && *p == '=')
 		{
-			info->env_changed = delete_node_at_index(&(info->env), i);
+			info->myshell_env_changed = myshell_delete_node_at_index(&(info->myshell_env), i);
 			i = 0;
-			node = info->env;
+			node = info->myshell_env;
 			continue;
 		}
 		node = node->next;
 		i++;
 	}
-	return (info->env_changed);
+	return (info->myshell_env_changed);
 }
 
 /**
@@ -58,36 +58,36 @@ int _unsetenv(info_t *info, char *var)
  * @value: The string env var value
  * Return: Always 0
  */
-int _setenv(info_t *info, char *var, char *value)
+int _setenv(myshell_info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
-	list_t *node;
+	myshell_list_t *node;
 	char *p;
 
 	if (!var || !value)
 		return (0);
 
-	buf = malloc(_strlen(var) + _strlen(value) + 2);
+	buf = malloc(myshell_strlen(var) + myshell_strlen(value) + 2);
 	if (!buf)
 		return (1);
-	_strcpy(buf, var);
-	_strcat(buf, "=");
-	_strcat(buf, value);
-	node = info->env;
+	myshell_strcpy(buf, var);
+	myshell_strcat(buf, "=");
+	myshell_strcat(buf, value);
+	node = info->myshell_env;
 	while (node)
 	{
-		p = starts_with(node->str, var);
+		p = myshell_starts_with(node->str, var);
 		if (p && *p == '=')
 		{
 			free(node->str);
 			node->str = buf;
-			info->env_changed = 1;
+			info->myshell_env_changed = 1;
 			return (0);
 		}
 		node = node->next;
 	}
-	add_node_end(&(info->env), buf, 0);
+	myshell_add_node_end(&(info->myshell_env), buf, 0);
 	free(buf);
-	info->env_changed = 1;
+	info->myshell_env_changed = 1;
 	return (0);
 }
