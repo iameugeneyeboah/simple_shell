@@ -8,7 +8,7 @@
  *
  * Return: 1 if chain delimiter, 0 otherwise
  */
-int myshell_is_chain(info_t *info, char *buf, size_t *p)
+int myshell_is_chain(myshell_info_t *info, char *buf, size_t *p)
 {
 	size_t j = *p;
 
@@ -16,18 +16,18 @@ int myshell_is_chain(info_t *info, char *buf, size_t *p)
 	{
 		buf[j] = '\0';
 		j++;
-		info->cmd_buf_type = CMD_OR;
+		info->myshell_cmd_buf_type = MYSHELL_CMD_OR;
 	}
 	else if (buf[j] == '&' && buf[j + 1] == '&')
 	{
 		buf[j] = '\0';
 		j++;
-		info->cmd_buf_type = CMD_AND;
+		info->myshell_cmd_buf_type = MYSHELL_CMD_AND;
 	}
-	else if (buf[j] == ';') /* found end of this command */
+	else if (buf[j] == ';')
 	{
-		buf[j] = '\0'; /* replace semicolon with null */
-		info->cmd_buf_type = CMD_CHAIN;
+		buf[j] = '\0';
+		info->myshell_cmd_buf_type = MYSHELL_CMD_CHAIN;
 	}
 	else
 		return (0);
@@ -45,21 +45,21 @@ int myshell_is_chain(info_t *info, char *buf, size_t *p)
  *
  * Return: Void
  */
-void myshell_check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t len)
+void myshell_check_chain(myshell_info_t *info, char *buf, size_t *p, size_t i, size_t len)
 {
 	size_t j = *p;
 
-	if (info->cmd_buf_type == CMD_AND)
+	if (info->myshell_cmd_buf_type == MYSHELL_CMD_AND)
 	{
-		if (info->status)
+		if (info->myshell_status)
 		{
 			buf[i] = '\0';
 			j = len;
 		}
 	}
-	if (info->cmd_buf_type == CMD_OR)
+	if (info->myshell_cmd_buf_type == MYSHELL_CMD_OR)
 	{
-		if (!info->status)
+		if (!info->myshell_status)
 		{
 			buf[i] = '\0';
 			j = len;
@@ -75,25 +75,25 @@ void myshell_check_chain(info_t *info, char *buf, size_t *p, size_t i, size_t le
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int myshell_replace_alias(info_t *info)
+int myshell_replace_alias(myshell_info_t *info)
 {
 	int i;
-	list_t *node;
+	myshell_list_t *node;
 	char *p;
 
 	for (i = 0; i < 10; i++)
 	{
-		node = myshell_node_starts_with(info->alias, info->argv[0], '=');
+		node = myshell_node_starts_with(info->myshell_alias, info->myshell_argv[0], '=');
 		if (!node)
 			return (0);
-		free(info->argv[0]);
+		free(info->myshell_argv[0]);
 		p = myshell_strchr(node->str, '=');
 		if (!p)
 			return (0);
 		p = myshell_strdup(p + 1);
 		if (!p)
 			return (0);
-		info->argv[0] = p;
+		info->myshell_argv[0] = p;
 	}
 	return (1);
 }
@@ -104,36 +104,36 @@ int myshell_replace_alias(info_t *info)
  *
  * Return: 1 if replaced, 0 otherwise
  */
-int myshell_replace_vars(info_t *info)
+int myshell_replace_vars(myshell_info_t *info)
 {
 	int i = 0;
-	list_t *node;
+	myshell_list_t *node;
 
-	for (i = 0; info->argv[i]; i++)
+	for (i = 0; info->myshell_argv[i]; i++)
 	{
-		if (info->argv[i][0] != '$' || !info->argv[i][1])
+		if (info->myshell_argv[i][0] != '$' || !info->myshell_argv[i][1])
 			continue;
 
-		if (!myshell_strcmp(info->argv[i], "$?"))
+		if (!myshell_strcmp(info->myshell_argv[i], "$?"))
 		{
-			myshell_replace_string(&(info->argv[i]),
-					myshell_strdup(myshell_convert_number(info->status, 10, 0)));
+			myshell_replace_string(&(info->myshell_argv[i]),
+					myshell_strdup(myshell_convert_number(info->myshell_status, 10, 0)));
 			continue;
 		}
-		if (!myshell_strcmp(info->argv[i], "$$"))
+		if (!myshell_strcmp(info->myshell_argv[i], "$$"))
 		{
-			myshell_replace_string(&(info->argv[i]),
+			myshell_replace_string(&(info->myshell_argv[i]),
 					myshell_strdup(myshell_convert_number(getpid(), 10, 0)));
 			continue;
 		}
-		node = myshell_node_starts_with(info->env, &info->argv[i][1], '=');
+		node = myshell_node_starts_with(info->myshell_env, &info->myshell_argv[i][1], '=');
 		if (node)
 		{
-			myshell_replace_string(&(info->argv[i]),
+			myshell_replace_string(&(info->myshell_argv[i]),
 					myshell_strdup(myshell_strchr(node->str, '=') + 1));
 			continue;
 		}
-		myshell_replace_string(&info->argv[i], myshell_strdup(""));
+		myshell_replace_string(&info->myshell_argv[i], myshell_strdup(""));
 
 	}
 	return (0);
