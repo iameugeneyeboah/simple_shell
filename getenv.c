@@ -11,7 +11,14 @@
  */
 char **get_environ(info_t *info)
 {
-	/* Implementation details */
+	/* Assuming Implementation is correct */
+  if (!info->environ || info->env_changed)
+    {
+      info->environ = list_to_strings(info->env);
+      info->env_changed = 0;
+    }
+
+  return (info->environ);
 }
 
 /**
